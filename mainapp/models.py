@@ -1,3 +1,4 @@
+from django.contrib.contenttypes import fields
 from django.db import models
 from django.db.models.fields.files import ImageField
 from django.contrib.auth import get_user_model
@@ -39,8 +40,34 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+class Notebook(Product):
+    diagonal = models.CharField(max_length=255, verbose_name='Diagonal')
+    display_type = models.CharField(max_length=255, verbose_name='Diagonal type')
+    processor_freq = models.CharField(max_length=255, verbose_name='Processor frequency')
+    ram = models.CharField(max_length=255, verbose_name='RAM')
+    video = models.CharField(max_length=255, verbose_name='Video card')
+    time_withoud_charge= models.CharField(max_length=255, verbose_name='Time work battery')
 
-class Cartproduct(models.Model):
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+class Smartphone(Product):
+
+    diagonal = models.CharField(max_length=255, verbose_name='Diagonal')
+    display_type = models.CharField(max_length=255, verbose_name='Diagonal type')
+    resolution = models.CharField(max_length=255, verbose_name='Resolution')
+    accum_volume = models.CharField(max_length=255, verbose_name='Battery volume')
+    ram = models.CharField(max_length=255, verbose_name='RAM')
+    sd =  models.BooleanField(default=True)
+    sd_volume_max = models.CharField(max_length=255, verbose_name='Max volume memory')
+    main_cam_md = models.CharField(max_length=255, verbose_name='Main camera')
+    frontal_cam_mp = models.CharField(max_length=255, verbose_name='Frontal camera')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+
+class CartProduct(models.Model):
 
     user=models.ForeignKey('Customer', verbose_name='Buyer', on_delete=models.CASCADE)
     cart=models.ForeignKey('Cart', verbose_name='Basket', on_delete=models.CASCADE, related_name='related_products')
@@ -56,7 +83,7 @@ class Cartproduct(models.Model):
 class Cart(models.Model):
 
     owner=models.ForeignKey('Customer', verbose_name='Owner', on_delete=models.CASCADE)
-    products=models.ManyToManyField(Cartproduct, blank=True, related_name='related_cart')
+    products=models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products=models.PositiveBigIntegerField(default=0)
     final_price=models.DecimalField(max_digits=9, decimal_places=2,verbose_name='Total price') 
 
