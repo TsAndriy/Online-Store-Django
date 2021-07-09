@@ -6,31 +6,33 @@ from .models import *
 
 from PIL import Image
 
+#____________________________________#
 class NotebookAdminForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['image'].help_text=mark_safe(
-            '<span style="color:red; font-size:14px"> Load image with minimum resolution {}x{}</span>'.format(
-                *Product.MIN_RESOLUTION
+            """<span style="color:red; font-size:14px"> When uploading an image with a resolution over {}x{} it will be cropped!</span>
+            """.format(
+                *Product.MAX_RESOLUTION
             )
         )
 
-    def clean_image(self):
-        image = self.cleaned_data['image']
-        img=Image.open(image)
-        print(img.width, img.height)
-        min_height, min_width= Product.MIN_RESOLUTION
-        max_height, max_width= Product.MAX_RESOLUTION
-        if image.size > Product.MAX_IMAGE_SIZE:
-            raise ValidationError('Image size should not exceed 3 megabytes!')
-        if img.height < min_height or img.width < min_width:
-            raise ValidationError('Resolution image less minimum!')
-        if img.height > max_height or img.width > max_width:
-            raise ValidationError('Resolution image more maximum!') 
-        return image
+    # def clean_image(self):
+    #     image = self.cleaned_data['image']
+    #     img=Image.open(image)
+    #     print(img.width, img.height)
+    #     min_height, min_width= Product.MIN_RESOLUTION
+    #     max_height, max_width= Product.MAX_RESOLUTION
+    #     if image.size > Product.MAX_IMAGE_SIZE:
+    #         raise ValidationError('Image size should not exceed 3 megabytes!')
+    #     if img.height < min_height or img.width < min_width:
+    #         raise ValidationError('Resolution image less minimum!')
+    #     if img.height > max_height or img.width > max_width:
+    #         raise ValidationError('Resolution image more maximum!') 
+    #     return image
 
-
+#____________________________________#
 
 class NotebookAdmin(admin.ModelAdmin): 
 
