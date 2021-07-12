@@ -106,7 +106,7 @@ class Notebook(Product):
     time_withoud_charge= models.CharField(max_length=255, verbose_name='Time work battery')
 
     def __str__(self):
-        return '{} : {}'.format(self.category.name, self.title)
+        return "{} : {}".format(self.category.name, self.title)
     
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
@@ -118,8 +118,10 @@ class Smartphone(Product):
     resolution = models.CharField(max_length=255, verbose_name='Resolution')
     accum_volume = models.CharField(max_length=255, verbose_name='Battery volume')
     ram = models.CharField(max_length=255, verbose_name='RAM')
-    sd =  models.BooleanField(default=True)
-    sd_volume_max = models.CharField(max_length=255, verbose_name='Max volume memory')
+    sd = models.BooleanField(default=True, verbose_name='SD card availability')
+    sd_volume_max = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name='Max volume memory'
+    )
     main_cam_md = models.CharField(max_length=255, verbose_name='Main camera')
     frontal_cam_mp = models.CharField(max_length=255, verbose_name='Frontal camera')
 
@@ -129,6 +131,12 @@ class Smartphone(Product):
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 
+    # @property
+    # def sd(self):
+    #     if self.sd:
+    #         return 'Yes'
+    #     return 'No'
+
 class CartProduct(models.Model):
 
     user=models.ForeignKey('Customer', verbose_name='Buyer', on_delete=models.CASCADE)
@@ -137,17 +145,19 @@ class CartProduct(models.Model):
     object_id=models.PositiveIntegerField()
     content_object=GenericForeignKey('content_type', 'object_id')
     qty=models.PositiveIntegerField(default=1)   
-    final_price=models.DecimalField(max_digits=9, decimal_places=2,verbose_name='Total price')
+    final_price=models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Total price')
 
     def __str__(self):
-        return 'Product: {} (for the basket)'.format(self.product.title)
+        return "Product: {} (for the basket)".format(self.content_object.title)
 
 class Cart(models.Model):
 
     owner=models.ForeignKey('Customer', verbose_name='Owner', on_delete=models.CASCADE)
     products=models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products=models.PositiveBigIntegerField(default=0)
-    final_price=models.DecimalField(max_digits=9, decimal_places=2,verbose_name='Total price') 
+    final_price=models.DecimalField(max_digits=9, decimal_places=2,verbose_name='Total price')
+    in_order= models.BooleanField(default=False)
+    for_anonymous_user= models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
@@ -159,5 +169,5 @@ class Customer(models.Model):
     address=models.CharField(max_length=255, verbose_name='Address')
 
     def __str__(self):
-        return 'Buyer: {} {}'.format(self.user.first_name, self.user.last_name)
+        return "Buyer: {} {}".format(self.user.first_name, self.user.last_name)
 
