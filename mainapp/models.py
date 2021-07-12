@@ -120,7 +120,7 @@ class Smartphone(Product):
     ram = models.CharField(max_length=255, verbose_name='RAM')
     sd = models.BooleanField(default=True, verbose_name='SD card availability')
     sd_volume_max = models.CharField(
-        max_length=255, null=True, blank=True, verbose_name='Max volume memory'
+        max_length=255, null=True, blank=True, verbose_name='Max volume SD card'
     )
     main_cam_md = models.CharField(max_length=255, verbose_name='Main camera')
     frontal_cam_mp = models.CharField(max_length=255, verbose_name='Frontal camera')

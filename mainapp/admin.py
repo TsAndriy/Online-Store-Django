@@ -34,15 +34,6 @@ class NotebookAdminForm(ModelForm):
 
 #____________________________________#
 
-class NotebookAdmin(admin.ModelAdmin): 
-
-    form= NotebookAdminForm
-
-    def formfield_for_foreignkey(self, db_field,  request, **kwargs): 
-        if db_field.name == 'category':
-            return ModelChoiceField(Category.objects.filter(slug='notebooks'))
-        return super().formfield_for_foreignkey(db_field,  request, **kwargs)
-
 class SmartphoneAdminForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -57,6 +48,16 @@ class SmartphoneAdminForm(ModelForm):
         if not self.cleaned_data['sd']:
             self.cleaned_data['sd_volume_max'] = None
         return self.cleaned_data
+
+
+class NotebookAdmin(admin.ModelAdmin): 
+
+    form= NotebookAdminForm
+
+    def formfield_for_foreignkey(self, db_field,  request, **kwargs): 
+        if db_field.name == 'category':
+            return ModelChoiceField(Category.objects.filter(slug='notebooks'))
+        return super().formfield_for_foreignkey(db_field,  request, **kwargs)
 
 class SmartphoneAdmin(admin.ModelAdmin):
 
