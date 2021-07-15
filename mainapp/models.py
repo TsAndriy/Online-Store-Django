@@ -98,6 +98,9 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def get_model_name(self):
+        return self.__class__.__name__.lower()
+
 #____________________________________#
     def save(self, *args, **kwargs):
         # image = self.image
@@ -180,6 +183,8 @@ class CartProduct(models.Model):
         self.final_price = self.qty * self.content_object.price
         super().save(*args, **kwargs)
 
+
+
 class Cart(models.Model):
 
     owner=models.ForeignKey('Customer', null=True , verbose_name='Owner', on_delete=models.CASCADE)
@@ -192,6 +197,15 @@ class Cart(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def save(self, *args, **kwargs):
+        cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+        if cart_data.get('final_price__sum'):
+            self.final_price= cart_data['final_price__sum']
+        else:
+            self.final_price = 0
+        self.total_products = cart_data['id__count']
+        super().save(*args, **kwargs)
+        
 class Customer(models.Model):
 
     user=models.ForeignKey(User, verbose_name='User',on_delete=models.CASCADE)  
